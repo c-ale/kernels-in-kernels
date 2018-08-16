@@ -19,7 +19,10 @@
 		      The output should have one of the flags highlighted, either 
 		      \textbf{svm} or \textbf{vmx}. If no output was produced, verify 
 		      in your \textbf{BIOS} that virtualization is supported. 
-	\item install required packages:		      
+		  
+	\item Get the \textbf{knk-resources.tar} file. The presenter will 
+		have the information as to how to obtain the file. 
+	  \item Install required packages:		      
          \begin{itemize}
             \item
             On \textbf{CentOS7}:
@@ -93,49 +96,95 @@
 
 \begin{exe} {Create and run a Virtual Machine based on an image}
 
-	Often a virtual disk is used for distributing a pre-configured environment,
-	this exercise will Create a virtual machine using an \textbf{xml} file as input to \textbf{virsh}.
+	Often a virtual disk is used for distributing a 
+	pre-configured environment, for this exercise a pre-installed
+	operating system image file is available in the
+	\textbf{knk-resources.tar} file.
+	The image file is called \textbf{tiny2.vmdk}.
+
+
+	This exercise will create a virtual machine 
+	using an \textbf{xml} file as input to \textbf{virsh}.
 
 	The parameters for the virtual machine are:
 	\begin{itemize}
-		\item name is \textbf{tiny2}
+		\item VM name is \textbf{tiny2}
 		\item 1 virtual CPU
 		\item 512M memory
 		\item the virtual disk is \file{/var/lib/libvirt/images/tiny2.vmdk}
 		\item use \textbf{virt-viewer} to access the virtual machine
 	\end{itemize}
+
 	In this exercise a pre-installed disk \file{tiny2.vmdk} contains a 
-	operating system and application to be made available. A \textbf{virsh}
-	define command is 
+	operating system and an application to be made available. 
+	A \textbf{virsh define} command is 
 	to be used with a \textbf{xml} configuration file. 
-
-	\textbf{Note:} As an added extra credit adventure, some distro's 
-	do not support writing to a \textbf{vmdk} image file. If \textbf{CentOS7}
-	is being used for the host, the tiny2.vmdk must be converted to qcow2. The 
-	conversion is done with the \textbf{qemu-img} command. 
-
-	This will convert the file: 
-		\begin{raw}
-# qemu-img convert -O qcow2 tiny2.vmdk tiny2.qcow2 
-		\end{raw}
-	You will have to remember to adjust the file name in the rest of the lab exercise.
 
 		
 	\begin{sol}
 	
 		\begin{enumerate}
-		\item Create a copy of the disk image and store it at \file{/var/lib/libvirt/images/tiny2.vmdk}
-		\item Create an \textbf{xml} configuration file. 
-			(a sample file is included in the
-				\filelink{_SOLUTIONS} directory)
+		\item Create a directory to store the exercise 
+			resources in and extract the tarball.
+			\begin{raw}
+# mkdir  /var/tmp/knk 
+# cd /var/tmp/knk
+# tar -xvf <download directory>/knk-resources.tar
+			\end{raw}
 
-		\textbf{Note:} There are two sample files one 
-			for \textbf{Ubuntu} called \filelink{tiny2.xml-ubuntu}
-			and for \textbf{CentOS} called 
-			\filelink{tiny2.xml-centos}, the difference is the 
-			name of the \textbf{emulator} in the file, please 
-			select the correct example file for your lab environment. 
+		\item Create a copy of the disk image 
+			and store it at 
+			\file{/var/lib/libvirt/images/tiny2.vmdk}
+			\begin{raw} 
+# cp /var/tmp/knk/tiny2.vmdk  /var/lib/libvirt/images/ 
+			\end{raw}
+
+		\item
+
+        \textbf{Note:} As an added extra credit adventure,
+        some distro's do not support writing to a \textbf{vmdk}
+        image file. If \textbf{CentOS7} is being used for the host,
+        the tiny2.vmdk must be converted to qcow2. The
+        conversion is done with the \textbf{qemu-img} command.
+
+        This will convert the file:
+                \begin{raw}
+# cd /var/lib/libvirt/images/
+# qemu-img convert -O qcow2 tiny2.vmdk tiny2.qcow2
+                \end{raw}
+        You will have to remember to adjust the file
+        name in the rest of the lab exercise.
+
+
+		\item Create an \textbf{xml} configuration file. 
+			(sample files are included in the
+				\filelink{/var/tmp/knk/} directory)
+
+		\textbf{Note:} There are three xml sample files 
+				in the resources directory, the names 
+				relate to the distro the host computer
+				is running:
+				\begin{itemize}
+				\item tiny2.xml-ubuntu  
+				\item tiny2.xml-centos
+				\item tiny2.xml-suse
+				\end{itemize}
+				Copy or rename the appopiate 
+				\textbf{xml} file to be \textbf{tiny2.xml} 
+				\begin{raw}
+# cp tiny2.xml-ubuntu tiny2.xml
+				\end{raw}
+				The name and extension is not manditory
+				but consistant naming helps with the exercise.
+
+
+				Please feel free to compare the xml files as 
+				they illustrate minor changes in 
+				the distributions.
+
+				An example of the configuratioin file is: 
 			\rawfile{tiny2.html.inc}
+
 		\item define the virtual machine 
 			\begin{raw}
 # virsh define tiny2.xml
@@ -156,11 +205,13 @@
 			\begin{raw}
 # virsh list --all 
 			\end{raw}
-		\item try a graceful shutdown of the VM, success or failure will depend on the OS
+		\item try a graceful shutdown of the VM, 
+			success or failure will depend on the OS
 			\begin{raw}
 # virsh shutdown tiny2 
 			\end{raw}
-		\item issue a forced shutdown of the VM if the graceful shutdown did not work
+		\item issue a forced shutdown of the VM 
+			if the graceful shutdown did not work
 			\begin{raw}
 # virsh destroy tiny2 
 			\end{raw} 
@@ -205,7 +256,7 @@
 		\item  Create a copy of \textbf{tiny2.vmdk} and place it in
 			\file{/var/lib/libvirt/images/tiny3.vmdk}
 			\begin{raw}
-# cp \file{/var/lib/libvirt/images/tiny2.vmdk} \file{/var/lib/libvirt/images/tiny3.vmdk}
+# cp /var/lib/libvirt/images/tiny2.vmdk /var/lib/libvirt/images/tiny3.vmdk
 			\end{raw}
 		\item Confirm or create a user called \textbf{dnsmasq}, it is used by
 			libvirt. 
@@ -302,51 +353,62 @@ Network default marked as autostarted
 
 \begin{exe} {Create a VM and install from a CD-rom image} 
 
-	This exercise will demonstrate installation of an operating system from a CD-rom 
+	This exercise will demonstrate installation of an 
+	operating system from a CD-rom image
 	using \textbf{virt-install}. 
-	The CD-rom image is available in resources tar file installed earlier. Since 
-	installation of operating systems can be long time and require access to 
-	download updates or repository data a small self contained OS was chosen for 
+	The CD-rom image is available in resources tar
+	file installed earlier. Since 
+	installation of operating systems can take a
+	long time and require access to 
+	download updates or repository data a 
+	small self contained OS was chosen for 
 	this exercise. 
 
-	\textbf{Note:} During the initial start up, we will be overriding a default setting 
-	and using a text mode console. This avoids some interesting issues with the mouse 
-	during the installation of Tiny Core Linux. 
+	\textbf{Note:} During the initial start up, 
+	a default of a text interface has been added.
+	This avoids 
+	some interesting issues with the mouse 
+	during and after installation of Tiny Core Linux.
+	This change has bee added specifically for the 
+	confrence environment. If a graphics interface is 
+	desire, the \textbf{TinyCore-Plus} installation
+	media is recomended.  
 
  The parameters for the virtual machine are:
         \begin{itemize}
                 \item name is \textbf{tinycore}
                 \item 1 virtual CPU
                 \item 512M memory
-		\item 0.1G new disk 
-                \item the virtual disk is \file{/var/lib/libvirt/images/tinycore.qcow2}
-                \item the virtual cd is \file{/var/lib/libvirt/images/CorePlus-current.iso}
-                \item use \textbf{virt-viewer} to access the virtual machine
+		\item 100M new virtual disk image
+                \item the virtual disk is 
+			\file{/var/lib/libvirt/images/tinycore.qcow2}
+                \item the virtual cd is 
+			\file{/var/tmp/knk/k-n-k-3.iso}
+                \item use \textbf{virt-viewer} 
+			to access the virtual machine
 	\end{itemize}
 
 	\begin{enumerate}
-	\item Verify the CD-rom image is in the directory specified.
+		\item Copy the CD-rom image to \filelink{/var/lib/libvirt/images}
+			directory. 
 		\begin{raw}
-# ls -l /var/lib/libvirt/images 
+# cp /var/tmp/knk/k-n-k-3.iso /var/lib/libvirt/images/k-n-k-3.iso  
 		\end{raw}
 	\item Boot from the CD-rom using \textbf{virt-install} using the options specified below:
 		\begin{raw}
-# virt-install  --name tinycore --memory 512 --vcpus 1 \
-		--cdrom /var/lib/libvirt/images/CorePlus-current.iso \
+$ virt-install  --name tinycore --memory 512 --vcpus 1 \
+		--cdrom /var/lib/libvirt/images/k-n-k-3.iso  \
 		--disk /var/lib/libvirt/images/tinycore.qcow2,size=0.1 \
 		--os-type linux --os-variant generic --boot useserial=on 
 		\end{raw}
 			A \textbf{virt-viewer} window should pop open. 
-		\item When the initial Core Plus screen appears, press the \textbf{tab} key. This 
-			will expose the boot string and stop the countdown timer. 
-			Add to the end of the boot string a \textbf{space} 
-			and the word \textbf{text} then	press enter.
+		\item When the initial Core Plus screen appears, press the \textbf{enter} key.
 
 			After the boot messages finish, the user friendly Tiny Core 
 			command prompt will be visible. 
 		\item To launch the installer at the prompt type: 
 			\begin{raw}
-sudo tc-install.sh 
+$ sudo tc-install.sh 
 			\end{raw}
 		\item Please fill in the installation choices as listed below:
 			\begin{itemize}
@@ -362,30 +424,29 @@ f for frugal, enter to continue
 					\begin{raw}
 1 for whole disk 
 					\end{raw}
-				\item Boot installer 
+				\item Bootloader 
 					\begin{raw}
-y for yes 
-					\end{raw}
-				\item Interface type 
+y for yes for bootloader 
+ 				\end{raw}
+				\item Install Extensions  
 					\begin{raw}
-c for core only 
-					\end{raw}
-				\item Select Extensions 
-					\begin{raw}
-no wifi
-no ndiswrapper
-no Wireless 
-yes installer tool 
-no remaster tool 
-no for non-US keyboard
 TCE/CDE Directory is left blank, press enter 
-Disk formatting option, use ext4
+				\end{raw}
+				\item Disk Formatting Options
+					\begin{raw}
+Select 3 for ext4
+					\end{raw}
+				\item Boot Options
+					\begin{raw}
 No additional boot options, press enter 
+					\end{raw}
+				\item Last chance before destroying a data on sda
+					\begin{raw}
 yes, start the install 
 					\end{raw}
 			\end{itemize}
 
-			The installation should complete in a minute. 
+			The installation should complete in a few seconds. 
 
 		\item When the installation is complete type in: 
 			\begin{raw}
@@ -441,8 +502,8 @@ sudo reboot
 
  virt-install \
 	--name deb9 \
-	--memory 512 \
-	--disk /var/lib/libvirt/images/deb9.qcow2 --vcpus 1 \
+	--memory 2048 \
+	--disk /var/lib/libvirt/images/deb9.qcow2 --vcpus 2 \
 	--os-type linux \
 	--os-variant debian9 \
 	--boot useserial=on  \
