@@ -1,0 +1,23 @@
+The following are the files to complete the 
+"Kernels-in-Kernels" lab exercises. 
+
+ 
+default-net.xml		This file is for openSUSE installations only 
+			it is the definition to create a "default"
+			libvirt network similar to CentOS & Ubuntu.
+
+k-n-k-3.iso		This is a bootable CDROM image of "TinyCore"
+			Distro. It have been "remastered" for our 
+			conference "install a VM" lab exercise. 	
+
+knk-bom.txt		This file. 
+knk-checksums		Checksums of all the files.
+
+tiny2.vmdk		Runable machine disk image. A small OS image
+			file for our "connect this up and run it"
+			exercise.
+		
+tiny2.xml-centos	These three files are the same except for 
+tiny2.xml-suse		tweaks for the specific host OS's. They 
+tiny2.xml-ubuntu	demonstrate how to configure VM's with virsh. 
+			
